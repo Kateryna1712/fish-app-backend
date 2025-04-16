@@ -6,7 +6,7 @@ import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { UserRepository } from './user/repository/user.repository';
 import { Auth } from './auth/entities/auth.entity';
-import { MyTypeOrmModule } from 'src/datasource/typeorm.module';
+import { MyTypeOrmModule } from '@/db/typeorm.module';
 import { AuthController } from './auth/auth.controller';
 import { AuthService } from './auth/auth.service';
 import { AuthRepository } from './auth/repositories/auth.repository';

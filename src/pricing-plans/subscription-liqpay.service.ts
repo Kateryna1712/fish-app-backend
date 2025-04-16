@@ -1,18 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePlanDto } from './dto/create-plan.dto';
-import { UpdatePlanDto } from './dto/update-plan.dto';
-import { Subscription } from './entities/subscription.entity';
-import { CreateSubscriptionDto } from './dto/create-subscr.dto';
-import { PaymentIntentDto } from 'src/3d-party/stripe/dto/payment-intent.dto';
-import { StripeService } from 'src/3d-party/stripe/stripe.service';
 import { Plan } from './entities/plan.entity';
-import Stripe from 'stripe';
 import { PlanService } from './plan.service';
 import { SubscriptionLiqpay } from './entities/payment-liqpay.entity';
 import { LiqpayService } from 'src/3d-party/liqpay/liqpay.service';
-import { PayLiqpayDto } from 'src/3d-party/liqpay/dto/pay-liqpay.dto';
 
 @Injectable()
 export class SubscriptionLiqpayService {

@@ -1,3 +1,1 @@
-export interface IAppConfig {
-    
-}
+export interface IAppConfig {}

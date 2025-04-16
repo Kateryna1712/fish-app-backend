@@ -1,11 +1,9 @@
-import { User } from 'src/UserAuthCommon/user/entities/user.entity';
 import {
   Entity,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne,
   OneToMany,
 } from 'typeorm';
 import { Subscription } from './subscription.entity';

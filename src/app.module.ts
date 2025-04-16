@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { MyTypeOrmModule } from './datasource/typeorm.module';
+import { MyTypeOrmModule } from './db/typeorm.module';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy } from './UserAuthCommon/auth/google/google.strategy';
 import { FishModule } from './fish/fish.module';
@@ -21,7 +21,6 @@ import { LiqpayModule } from './3d-party/liqpay/liqpay.module';
       envFilePath: '.env.dev',
       isGlobal: true,
     }),
-
     JwtModule.register({}),
     UserAuthCommonModule,
     FishModule,

@@ -1,18 +1,6 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  RawBodyRequest,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { LiqpayService } from './liqpay.service';
 import { PayLiqpayDto } from './dto/pay-liqpay.dto';
-import { CallbackLiqpayDto } from './dto/callback-liqpay.dto';
-import { Request } from 'express';
 
 @Controller('liqpay')
 export class LiqpayController {

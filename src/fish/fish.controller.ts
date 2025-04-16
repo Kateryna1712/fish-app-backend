@@ -1,10 +1,4 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { WeatherService } from './weather.service';
 import { ForecastService } from './forecast.service';
 import { GetCurWeatherDto } from './dto/getCurWeather.dto';

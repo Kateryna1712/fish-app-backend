@@ -4,14 +4,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne,
   ManyToOne,
-  OneToMany,
 } from 'typeorm';
-
-import { Auth } from 'src/UserAuthCommon/auth/entities/auth.entity';
-import { Subscription } from 'src/pricing-plans/entities/subscription.entity';
-import { Invitation } from 'src/invite-friend/entities/invite-friend.entity';
 import { User } from 'src/UserAuthCommon/user/entities/user.entity';
 
 @Entity()

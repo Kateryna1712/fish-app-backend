@@ -1,14 +1,8 @@
-import {
-  Inject,
-  Injectable,
-  Logger,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PayLiqpayDto } from './dto/pay-liqpay.dto';
 import { ConfigService } from '@nestjs/config';
 
 import * as crypto from 'crypto';
-import { CallbackLiqpayDto } from './dto/callback-liqpay.dto';
 
 @Injectable()
 export class LiqpayService {

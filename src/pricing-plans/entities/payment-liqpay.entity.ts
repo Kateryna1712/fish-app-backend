@@ -5,8 +5,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
 import { Plan } from './plan.entity';

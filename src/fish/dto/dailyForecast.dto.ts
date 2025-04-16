@@ -1,4 +1,4 @@
-import { IsEmail, NotContains, IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DailyForecastDto {

@@ -27,7 +27,6 @@ export class AuthRepository {
     authData: Partial<Auth>,
     createSubscrDto: CreateSubscriptionDto,
   ) {
-    console.log('-=-=-=-=-=-createSubscrDto'), createSubscrDto;
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

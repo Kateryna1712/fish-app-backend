@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { InviteFriendService } from './invite-friend.service';
 import { InviteFriendDto } from './dto/create-invite-friend.dto';
 import { AuthGuard } from 'src/shared/auth-guard/auth.guard';

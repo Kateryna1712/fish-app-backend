@@ -16,7 +16,6 @@ import * as otpGenerator from 'otp-generator';
 import { UserService } from 'src/UserAuthCommon/user/user.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { DataSource, Repository } from 'typeorm';
-import { Auth } from './entities/auth.entity';
 import { User } from 'src/UserAuthCommon/user/entities/user.entity';
 import { SignInDto } from './dto/sign-in.dto';
 import { RequestWithGoogleUser } from 'src/UserAuthCommon/user/interfaces/user.interfaces';

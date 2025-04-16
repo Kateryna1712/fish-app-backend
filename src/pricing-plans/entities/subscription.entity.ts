@@ -1,12 +1,10 @@
-import { User } from 'src/UserAuthCommon/user/entities/user.entity';
+import { User } from '@/UserAuthCommon/user/entities/user.entity';
 import {
   Entity,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  OneToOne,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
 import { Plan } from './plan.entity';

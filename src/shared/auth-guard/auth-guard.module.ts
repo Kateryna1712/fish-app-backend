@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AuthGuardService } from './auth-guard.service';
-import { MyTypeOrmModule } from 'src/datasource/typeorm.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SubscriptionGuardService } from './subscription-guard.service';
 

@@ -15,10 +15,6 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
 
-  const NODE_ENV = configService.get('NODE_ENV');
-
-  const isDevelopment = NODE_ENV === 'development';
-
   const PORT = configService.get('PORT') || 8080;
 
   const logger = new Logger('bootstrap');

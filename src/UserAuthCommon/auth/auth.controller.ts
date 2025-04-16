@@ -10,7 +10,6 @@ import {
   HttpStatus,
   HttpException,
   BadRequestException,
-  Query,
 } from '@nestjs/common';
 
 import { Response, Request } from 'express';

@@ -9,7 +9,6 @@ import { UpdatePlaceDto } from './dto/update-place.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PlanService } from 'src/pricing-plans/plan.service';
 import { Place } from './entities/place.entity';
-import { User } from 'src/UserAuthCommon/user/entities/user.entity';
 
 @Injectable()
 export class PlaceService {
