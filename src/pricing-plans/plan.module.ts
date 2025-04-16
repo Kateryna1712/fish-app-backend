@@ -6,7 +6,6 @@ import { PlanController } from './plan.controller';
 import { PlanService } from './plan.service';
 import { SubscriptionController } from './subscription.controller';
 import { SubscriptionService } from './subscription.service';
-import { StripeModule } from 'src/3d-party/stripe/stripe.module';
 import { AuthGuardModule } from 'src/shared/auth-guard/auth-guard.module';
 import { SubscriptionLiqpay } from './entities/payment-liqpay.entity';
 import { LiqpayModule } from 'src/3d-party/liqpay/liqpay.module';
@@ -16,7 +15,6 @@ import { SubscriptionLiqpayService } from './subscription-liqpay.service';
   imports: [
     TypeOrmModule.forFeature([Subscription, SubscriptionLiqpay, Plan]),
     AuthGuardModule,
-    StripeModule.forRootAsync(),
     LiqpayModule,
   ],
   controllers: [PlanController, SubscriptionController],

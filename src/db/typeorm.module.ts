@@ -10,6 +10,7 @@ import { Invitation } from 'src/invite-friend/entities/invite-friend.entity';
 import { Place } from 'src/place/entities/place.entity';
 import { SubscriptionLiqpay } from 'src/pricing-plans/entities/payment-liqpay.entity';
 import { Migration1744823175098 } from './migrations/1744823175098-migration';
+import 'dotenv/config';
 
 @Global()
 @Module({

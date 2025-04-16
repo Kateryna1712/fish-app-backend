@@ -8,7 +8,6 @@ import { GoogleStrategy } from './UserAuthCommon/auth/google/google.strategy';
 import { FishModule } from './fish/fish.module';
 import { GoogleApiModule } from './google-api/google-api.module';
 import { UserAuthCommonModule } from './UserAuthCommon/UserAuthCommonModule';
-import { StripeModule } from './3d-party/stripe/stripe.module';
 import { PlanModule } from './pricing-plans/plan.module';
 import { InviteFriendModule } from './invite-friend/invite-friend.module';
 import { PlaceModule } from './place/place.module';
@@ -26,7 +25,6 @@ import { LiqpayModule } from './3d-party/liqpay/liqpay.module';
     FishModule,
     GoogleApiModule,
     PlanModule,
-    StripeModule.forRootAsync(),
     InviteFriendModule,
     PlaceModule,
     LiqpayModule,
