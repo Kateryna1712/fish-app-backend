@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdatePlanDto } from './dto/update-plan.dto';
 import { Subscription } from './entities/subscription.entity';
 import { CreateSubscriptionDto } from './dto/create-subscr.dto';
 import { PaymentIntentDto } from 'src/3d-party/stripe/dto/payment-intent.dto';
@@ -34,10 +33,6 @@ export class SubscriptionService {
 
   findOneById(id: string) {
     return this.subscriptionRepository.findOne({ where: { id } });
-  }
-
-  update(id: number, updatePlanDto: UpdatePlanDto) {
-    return `This action updates a #${id} Plan`;
   }
 
   remove(id: number) {

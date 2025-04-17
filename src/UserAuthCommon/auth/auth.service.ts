@@ -47,6 +47,7 @@ export class AuthService {
     private otpRepository: Repository<Otp>,
     @InjectRepository(OtpPassw)
     private otpPasswRepository: Repository<OtpPassw>,
+    private readonly mailService: EmailService,
   ) {}
 
   async googleLogin(req: RequestWithGoogleUser) {
@@ -141,34 +142,50 @@ export class AuthService {
       const { email, password } = signInDto;
 
       const userDb = await this.userService.getUserInfoByEmail(email);
-      console.log('-=-=-=-=-userDb in sign in', userDb);
-
       if (!userDb) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Invalid credentials');
       }
 
       const { password: passwordHash, ...user } = userDb;
-      console.log('-=-=-=-=-=-user in sign in', user);
 
       const isAuth = await bcrypt.compare(password, passwordHash);
-
       if (!isAuth) {
-        throw new HttpException('Unauthorized.', HttpStatus.UNAUTHORIZED);
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      // Check if email is verified
+      const auth = await this.getAuthByEmail(email);
+      if (!auth.verified) {
+        const otpCode = this.generateOtpCode();
+
+        // Delete existing OTP if it exists
+        const existingOtp = await this.otpRepository.findOne({
+          where: { auth: { id: auth.id } },
+        });
+        if (existingOtp) {
+          await this.otpRepository.delete({ id: existingOtp.id });
+        }
+
+        await this.otpRepository.save({
+          otp: otpCode,
+          expiration: new Date(Date.now() + 10 * 60 * 1000),
+          auth: { id: auth.id },
+        });
+
+        await this.emailService.sendEmailVerify(email, otpCode);
+        throw new UnauthorizedException(
+          'Email not verified. Verification code sent to your email.',
+        );
       }
 
       return user;
     } catch (error) {
       this.logger.error(error);
-      if (error.status === HttpStatus.UNAUTHORIZED) {
-        throw new HttpException(error.message, error.status);
+      if (error instanceof UnauthorizedException) {
+        throw error;
       }
-
-      if (error.status === HttpStatus.BAD_REQUEST) {
-        throw new HttpException(error.message, error.status);
-      }
-
       throw new HttpException(
-        'An error occurred while sign in.',
+        'An error occurred while signing in.',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -235,10 +252,17 @@ export class AuthService {
 
     const otpCode = this.generateOtpCode();
 
-    await this.otpRepository.upsert(
-      { otp: otpCode, expiration: new Date(Date.now() + 10 * 60 * 1000), auth },
-      ['auth'],
-    );
+    // Delete existing OTP if it exists
+    if (otpDb) {
+      await this.otpRepository.delete({ id: otpDb.id });
+    }
+
+    // Create new OTP
+    await this.otpRepository.save({
+      otp: otpCode,
+      expiration: new Date(Date.now() + 10 * 60 * 1000),
+      auth: { id: auth.id },
+    });
 
     await this.emailService.sendEmailVerify(email, otpCode);
 
@@ -354,10 +378,6 @@ export class AuthService {
   }
 
   async validateResetOtp(otpDb: OtpPassw, otp: string, email: string) {
-    console.log('-=-=-=-=-=-=-otp', otp);
-
-    console.log('-=-=-=-=-=-=-otpDb', otpDb);
-
     if (
       !otpDb ||
       !otpDb.otp ||

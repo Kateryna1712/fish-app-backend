@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MyTypeOrmModule } from './db/typeorm.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -29,7 +27,6 @@ import { LiqpayModule } from './3d-party/liqpay/liqpay.module';
     PlaceModule,
     LiqpayModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, GoogleStrategy],
+  providers: [GoogleStrategy],
 })
 export class AppModule {}

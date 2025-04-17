@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { EmailOptions } from './interfaces/EmaiilOptions.interface';
 import { EmailTemplateService } from './email-template.service.';
@@ -66,21 +65,5 @@ export class EmailService {
       this.logger.error(error);
       throw error;
     }
-  }
-
-  findAll() {
-    return `This action returns all email`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} email`;
-  }
-
-  update(id: number, updateEmailDto: UpdateEmailDto) {
-    return `This action updates a #${id} email`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} email`;
   }
 }

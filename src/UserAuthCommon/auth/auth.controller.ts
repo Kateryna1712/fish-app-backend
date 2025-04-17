@@ -74,15 +74,6 @@ export class AuthController {
     );
   }
 
-  @Get('test')
-  async test(
-    @Req() request: Request,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    console.log('-=-=-=-=-=--=-test cookies', request.cookies);
-    return 'test succs';
-  }
-
   @Post('sign-up')
   async signUp(
     @Body() signUpDto: SignUpDto,
@@ -154,7 +145,7 @@ export class AuthController {
 
     response.cookie('accessToken', accessToken, this.accessTokenCookieOptions);
 
-    return;
+    return accessToken;
   }
 
   // @ApiSignOut()
