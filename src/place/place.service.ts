@@ -23,22 +23,28 @@ export class PlaceService {
     userId: string,
     subscrType: string,
   ) {
-    const plan = await this.planService.findOneByName(subscrType);
-    if (!plan) throw new NotFoundException(`Plan ${subscrType} not found`);
+    try {
+      const plan = await this.planService.findOneByName(subscrType);
+      if (!plan) throw new NotFoundException(`Plan ${subscrType} not found`);
 
-    const places = await this.findAllUserPlaces(userId);
-    if (places.length >= plan.placesNumber) {
-      throw new ForbiddenException('Limit error', {
-        cause: new Error(),
-        description: 'You have reached the limit of places',
+      const places = await this.findAllUserPlaces(userId);
+
+      // if (places.length >= plan.placesNumber) {
+      //   throw new ForbiddenException('Limit error', {
+      //     cause: new Error(),
+      //     description: 'You have reached the limit of places',
+      //   });
+      // }
+
+      const newPlace = this.placeRepository.create({
+        ...createPlaceDto,
+        user: { id: userId },
       });
+      return await this.placeRepository.save(newPlace);
+    } catch (e) {
+      console.error('Error creating place:', e);
+      throw e; // Re-throw the error to be handled by the controller
     }
-
-    const newPlace = this.placeRepository.create({
-      ...createPlaceDto,
-      user: { id: userId },
-    });
-    return await this.placeRepository.save(newPlace);
   }
 
   async findAllUserPlaces(userId: string) {

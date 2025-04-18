@@ -149,7 +149,9 @@ export class AuthService {
       }
 
       // Get the complete user object with relationships
-      const completeUser = await this.userService.getUserInfoByEmail(user.email);
+      const completeUser = await this.userService.getUserInfoByEmail(
+        user.email,
+      );
       if (!completeUser) {
         throw new HttpException(
           'User not found after creation',
@@ -157,10 +159,9 @@ export class AuthService {
         );
       }
 
-      // Generate OTP for email verification
       const otpCode = this.generateOtpCode();
       const auth = await this.getAuthByEmail(signUpDto.email);
-      
+
       if (auth) {
         await this.otpRepository.save({
           otp: otpCode,

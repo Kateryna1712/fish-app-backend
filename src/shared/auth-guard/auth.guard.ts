@@ -18,7 +18,6 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const accessToken = request.cookies.accessToken;
-    console.log('-=-=-=-=-=cookies in gvard', request.cookies);
 
     if (!accessToken) {
       throw new UnauthorizedException('Unauthorized.');
@@ -28,7 +27,6 @@ export class AuthGuard implements CanActivate {
         secret: this.jwtAccessSecret,
       });
       const user = await this.authGuardService.findOne(payload.id);
-      console.log('-=-=-=-=-=-=-=user', user);
 
       request['userId'] = user.id;
       request['email'] = user.email;

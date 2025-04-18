@@ -22,7 +22,7 @@ import { RequestWithUserSubscr } from 'src/fish/interfaces/interfaces';
 export class PlaceController {
   constructor(private readonly placeService: PlaceService) {}
 
-  @UseGuards(AuthGuard, SubscriptionGuard)
+  @UseGuards(AuthGuard)
   @RequiredSubscriptionType(['free', 'pro'])
   @Post()
   create(

@@ -104,7 +104,6 @@ export class WeatherService {
       ),
     );
 
-    console.log('-=-=-=-=-=-res data region openweather', res.data);
     return res.data[0];
   }
 
@@ -130,8 +129,6 @@ export class WeatherService {
         ),
       );
       const data = response.data;
-
-      console.log('-=-=-=-=-=-=-=-=-weathre data', data);
 
       const utcTimeSunrise = data.current.sunrise;
       const utcTimeSunset = data.current.sunset;
@@ -204,13 +201,6 @@ export class WeatherService {
         hourItem.date = date;
         hourItem.time = time;
       });
-
-      console.log(
-        '-=-=-=-=-=-=-=formatedHourlyData',
-        data.hourly[0],
-        data.hourly[1],
-      );
-
       return data;
     } catch (error) {
       console.log('-=-=-=-=-=-=-=-=-=-eerrror', error);
@@ -277,7 +267,6 @@ export class WeatherService {
 
   async getNavigationalTwilight(lat: number, lon: number, date: Date) {
     const times = SunCalc.getTimes(new Date(date), lat, lon);
-    console.log('-=-=-=-=-=-times', times);
 
     return {
       nauticalDawn: times.nauticalDawn,

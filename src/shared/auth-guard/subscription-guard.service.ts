@@ -33,12 +33,6 @@ export class SubscriptionGuardService {
         );
       });
 
-    console.log('-=-=-=-=-=-subscr', subscr);
-    console.log(
-      '-=-=-=-=-=-!requiredSubscrtype.includes(subscr.type)',
-      !requiredSubscrtype.includes(subscr.type),
-    );
-
     const now = new Date();
     const isExpired = subscr.currentPeriodEnd < now;
 
