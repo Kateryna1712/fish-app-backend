@@ -202,12 +202,11 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      // Check if email is verified
       const auth = await this.getAuthByEmail(email);
+
       if (!auth.verified) {
         const otpCode = this.generateOtpCode();
 
-        // Delete existing OTP if it exists
         const existingOtp = await this.otpRepository.findOne({
           where: { auth: { id: auth.id } },
         });
@@ -222,9 +221,6 @@ export class AuthService {
         });
 
         await this.emailService.sendEmailVerify(email, otpCode);
-        throw new UnauthorizedException(
-          'Email not verified. Verification code sent to your email.',
-        );
       }
 
       return user;
