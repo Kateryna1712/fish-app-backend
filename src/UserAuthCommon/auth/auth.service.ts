@@ -97,44 +97,92 @@ export class AuthService {
 
   ///todo move db operation into repository
   async signUp(signUpDto: SignUpDto) {
-    const { password } = signUpDto;
+    try {
+      const { password } = signUpDto;
 
-    const userDb = await this.userService.getUserInfoByEmail(signUpDto.email);
-    console.log('-=-=-=-=-user in google login from db', userDb);
-    if (userDb) {
-      throw new BadRequestException('Bad user data');
+      const userDb = await this.userService.getUserInfoByEmail(signUpDto.email);
+      this.logger.debug('-=-=-=-=-user in sign up from db', userDb);
+      if (userDb) {
+        throw new BadRequestException('User already exists');
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const planFree = await this.planService.findOneByName('Free');
+      if (!planFree) {
+        throw new HttpException(
+          'Free plan not found in database',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const createSubscrDto: CreateSubscriptionDto = {
+        planId: planFree.id,
+        stripeSubscriptionId: '0',
+        stripeCustomerId: '0',
+        status: 'active',
+        type: planFree.name,
+        currentPeriodStart: new Date(),
+        currentPeriodEnd: new Date(
+          new Date().setMonth(new Date().getMonth() + 1),
+        ),
+      };
+      this.logger.debug('-=-=-=-=-=plan in sign up', planFree);
+
+      const user = await this.authRepository.createAuthUser(
+        {
+          ...signUpDto,
+          password: passwordHash,
+        },
+        {
+          email: signUpDto.email,
+          verified: false,
+        },
+        createSubscrDto,
+      );
+
+      if (!user) {
+        throw new HttpException(
+          'Failed to create user account',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Get the complete user object with relationships
+      const completeUser = await this.userService.getUserInfoByEmail(user.email);
+      if (!completeUser) {
+        throw new HttpException(
+          'User not found after creation',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Generate OTP for email verification
+      const otpCode = this.generateOtpCode();
+      const auth = await this.getAuthByEmail(signUpDto.email);
+      
+      if (auth) {
+        await this.otpRepository.save({
+          otp: otpCode,
+          expiration: new Date(Date.now() + 10 * 60 * 1000),
+          auth: { id: auth.id },
+        });
+
+        await this.emailService.sendEmailVerify(signUpDto.email, otpCode);
+      }
+
+      delete completeUser.password;
+      return completeUser;
+    } catch (error) {
+      this.logger.error('Error in signUp:', error);
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(
+        'An error occurred during sign up',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    const planFree = await this.planService.findOneByName('free');
-    const createSubscrDto: CreateSubscriptionDto = {
-      planId: planFree.id,
-      stripeSubscriptionId: '0',
-      stripeCustomerId: '0',
-      status: 'active',
-      type: planFree.name,
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(
-        new Date().setMonth(new Date().getMonth() + 1),
-      ),
-    };
-    console.log('-=-=-=-=-=plan in sign up', planFree);
-
-    const user = await this.authRepository.createAuthUser(
-      {
-        ...signUpDto,
-        password: passwordHash,
-      },
-
-      {
-        email: signUpDto.email,
-      },
-      createSubscrDto,
-    );
-    delete user.password;
-    console.log('-=-=-=-=-user in sign up created', user);
-    return user;
   }
 
   async signIn(signInDto: SignInDto) {
