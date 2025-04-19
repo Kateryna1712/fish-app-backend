@@ -111,6 +111,7 @@ export class WeatherService {
     lat: number,
     lon: number,
     lang?: string,
+    date?: string,
   ): Promise<IForecastDataRes> {
     const params = {
       lat: lat,
@@ -130,46 +131,41 @@ export class WeatherService {
       );
       const data = response.data;
 
-      const utcTimeSunrise = data.current.sunrise;
-      const utcTimeSunset = data.current.sunset;
+      const foundDay = data.daily.find((item) => {
+        const currentDate = new Date(item.dt * 1000)
+          .toISOString()
+          .split('T')[0];
+        console.log('current-=-=-=', currentDate);
+        console.log('param--=-date', date.split('T')[0]);
+        return currentDate !== date.split('T')[0];
+      });
 
-      const utcTime = data.current.dt;
+      const finalDate =
+        new Date(Date.now()).toISOString().split('T')[0] === date.split('T')[0]
+          ? data.current
+          : foundDay;
 
-      const timezoneOffset = data.timezone_offset;
+      console.log('99999999', foundDay);
 
-      // const sunrise = new Date((utcTimeSunrise + timezoneOffset) * 1000);
-      // const sunset = new Date((utcTimeSunset + timezoneOffset) * 1000);
+      const utcTimeSunrise = finalDate.sunrise;
+      const utcTimeSunset = finalDate.sunset;
 
-      // const time = new Date((utcTime + timezoneOffset) * 1000);
+      const utcTime = finalDate.dt;
 
-      data.current.sunriseTime = this.convertTime2(
-        utcTimeSunrise,
-        timezoneOffset,
-      );
-      data.current.sunsetTime = this.convertTime2(
-        utcTimeSunset,
-        timezoneOffset,
-      );
-      data.current.dateTime = this.convertTime2(utcTime, timezoneOffset);
+      data.current.sunriseTime = this.convertTime2(utcTimeSunrise);
+      data.current.sunsetTime = this.convertTime2(utcTimeSunset);
+
+      finalDate.dateTime = this.convertTime2(utcTime);
       console.log('-=-=-=-=-=-=-=-date current', data.current.dateTime);
 
       const utcTimeMoonrise = data.daily[0].moonrise;
       const utcTimeMonnset = data.daily[0].moonset;
       const utcTimeDailyDate = data.daily[0].dt;
 
-      data.daily[0].moonriseTime = this.convertTime2(
-        utcTimeMoonrise,
-        timezoneOffset,
-      );
+      data.daily[0].moonriseTime = this.convertTime2(utcTimeMoonrise);
 
-      data.daily[0].moonsetTime = this.convertTime2(
-        utcTimeMonnset,
-        timezoneOffset,
-      );
-      data.daily[0].dateTime = this.convertTime2(
-        utcTimeDailyDate,
-        timezoneOffset,
-      );
+      data.daily[0].moonsetTime = this.convertTime2(utcTimeMonnset);
+      data.daily[0].dateTime = this.convertTime2(utcTimeDailyDate);
 
       return { ...data, current: data.current, daily: data.daily[0] };
     } catch (error) {
@@ -251,7 +247,7 @@ export class WeatherService {
     return { date, time };
   }
 
-  private convertTime2(utcTime: number, timezoneOffset: number) {
+  private convertTime2(utcTime: number) {
     // console.log('-=-=-=-==-in convert time', utcTime, timezoneOffset);
     const dateTime = new Date(utcTime * 1000);
     console.log('=-=-=-=-=-dateTime', dateTime);

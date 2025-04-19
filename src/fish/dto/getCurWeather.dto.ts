@@ -15,5 +15,8 @@ export class GetCurWeatherDto {
   @IsString()
   lang?: string;
 
-  date?: Date;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  date?: string;
 }

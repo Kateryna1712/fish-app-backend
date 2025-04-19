@@ -56,12 +56,11 @@ export class FishController {
 
   @Get('forecast-current')
   async getCurrForecast(@Query() getCurWeatherDto: GetCurWeatherDto) {
-    console.log('0--==-=-=-=-=-get forecast dto', getCurWeatherDto);
-
     const data = await this.weatherService.getCurrentWeatherData(
       getCurWeatherDto.lat,
       getCurWeatherDto.lon,
       getCurWeatherDto.lang,
+      getCurWeatherDto.date,
     );
 
     data.forecast = this.forecastService.fishForecastCurr(data);
@@ -72,8 +71,6 @@ export class FishController {
     );
 
     return data;
-
-    // return mockCurForecastData;
   }
 
   @UseGuards(AuthGuard, SubscriptionGuard)

@@ -51,7 +51,7 @@ export class ForecastService {
       if (time >= sunrise && time <= sunset) {
         return (hour >= 6 && hour < 9) || (hour >= 17 && hour < 20) ? 1 : 0.5;
       } else {
-        return 0.4; // Ніч
+        return 0.4;
       }
     };
 
@@ -68,20 +68,20 @@ export class ForecastService {
     const moonPhaseScore =
       normalizeMoonPhase(data.daily.moon_phase) * weights.moonPhase;
 
-    const timeOfDayScore =
-      normalizeTimeOfDay(
-        data.current.dateTime,
-        data.current.sunriseTime,
-        data.current.sunriseTime,
-      ) * weights.timeOfDay;
+    // const timeOfDayScore =
+    //   normalizeTimeOfDay(
+    //     data.current.dateTime,
+    //     data.current.sunriseTime,
+    //     data.current.sunriseTime,
+    //   ) * weights.timeOfDay;
 
     const totalProbability =
       pressureScore +
       windSpeedScore +
       windDirectionScore +
       temperatureScore +
-      moonPhaseScore +
-      timeOfDayScore;
+      moonPhaseScore
+      //timeOfDayScore;
 
     return Math.round(totalProbability * 100);
   }
