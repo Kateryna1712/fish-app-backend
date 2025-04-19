@@ -75,13 +75,6 @@ export class ForecastService {
         data.current.sunriseTime,
       ) * weights.timeOfDay;
 
-    console.log('-=-=-=-=-=-=pressureScore', pressureScore);
-    console.log('-=-=-=-=-=-=pressureScore', windSpeedScore);
-    console.log('-=-=-=-=-=-=pressureScore', windDirectionScore);
-    console.log('-=-=-=-=-=-=pressureScore', temperatureScore);
-    console.log('-=-=-=-=-=-=pressureScore', moonPhaseScore);
-    console.log('-=-=-=-=-=-=pressureScore', timeOfDayScore);
-
     const totalProbability =
       pressureScore +
       windSpeedScore +
@@ -148,13 +141,6 @@ export class ForecastService {
     const timeOfDayScore =
       normalizeTimeOfDay(new Date(data.time)) * weights.timeOfDay;
 
-    console.log('-=-=-=-=-=-=pressureScore', pressureScore);
-    console.log('-=-=-=-=-=-=windSpeedScore', windSpeedScore);
-    console.log('-=-=-=-=-=-=windDirectionScore', windDirectionScore);
-    console.log('-=-=-=-=-=-=temperatureScore', temperatureScore);
-    console.log('-=-=-=-=-=-=moonPhaseScore', moonPhaseScore);
-    console.log('-=-=-=-=-=-=timeOfDayScore', timeOfDayScore);
-
     const totalProbability =
       pressureScore +
       windSpeedScore +
@@ -162,7 +148,6 @@ export class ForecastService {
       temperatureScore +
       moonPhaseScore +
       timeOfDayScore;
-    console.log('=-=-=-=-=-=-==totalProbability', totalProbability);
     return Math.round(totalProbability * 100);
   }
 
@@ -215,13 +200,6 @@ export class ForecastService {
 
     const timeOfDayScore = 0.7 * weights.timeOfDay;
 
-    console.log('-=-=-=-=-=-=pressureScore', pressureScore);
-    console.log('-=-=-=-=-=-=windSpeedScore', windSpeedScore);
-    console.log('-=-=-=-=-=-=windDirectionScore', windDirectionScore);
-    console.log('-=-=-=-=-=-=temperatureScore', temperatureScore);
-    console.log('-=-=-=-=-=-=moonPhaseScore', moonPhaseScore);
-    console.log('-=-=-=-=-=-=timeOfDayScore', timeOfDayScore);
-
     const totalProbability =
       pressureScore +
       windSpeedScore +
@@ -229,21 +207,23 @@ export class ForecastService {
       temperatureScore +
       moonPhaseScore +
       timeOfDayScore;
-    console.log('=-=-=-=-=-=-==totalProbability', totalProbability);
     return Math.round(totalProbability * 100);
   }
 
   generateDateArray(startDate: string, daysCount: number) {
-    console.log('-=-=-=-=-=-=-generateDateArray start');
     const dates = [];
     const start = new Date(startDate);
 
-    for (let i = 0; i < daysCount; i++) {
-      const newDate = new Date(start.getTime() + i * 24 * 60 * 60 * 1000);
-      dates.push(newDate.toISOString().split('T')[0]);
+    // Validate the date
+    if (isNaN(start.getTime())) {
+      throw new Error('Invalid date format');
     }
 
-    console.log('-=-=-=-=-=-=-generateDateArray dates arr', dates);
+    for (let i = 0; i < daysCount; i++) {
+      const newDate = new Date(start);
+      newDate.setDate(start.getDate() + i);
+      dates.push(newDate.toISOString().split('T')[0]);
+    }
 
     return dates;
   }

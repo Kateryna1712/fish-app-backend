@@ -15,9 +15,6 @@ export class UserController {
     @Req() request: RequestWithUser,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    console.log('-=-=-=-=-=-=-user id', request.userId);
-
-    console.log('-=-=-=-=-=-=-update user dto', updateUserDto);
     return this.userService.editProfileData(request.userId, updateUserDto);
   }
 
@@ -27,9 +24,6 @@ export class UserController {
     @Req() request: RequestWithUser,
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
-    console.log('-=-=-=-=-=-=-user id', request.userId);
-
-    console.log('-=-=-=-=-=-=-update user dto', changePasswordDto);
     return this.userService.changePassword(request.userId, changePasswordDto);
   }
 }

@@ -21,7 +21,6 @@ export class InviteFriendService {
     inviterEmail: string,
     createInviteFriendDto: InviteFriendDto,
   ) {
-    console.log('-=-=-=-=-=-=userId', userId);
     const invitationDb = await this.invitationRepository.findOne({
       where: { owner: { id: userId } },
     });

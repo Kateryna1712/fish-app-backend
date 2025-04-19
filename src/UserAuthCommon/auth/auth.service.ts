@@ -55,10 +55,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     const userGoogle = req.user;
-    console.log('-=-=-=-=-user in google auth', req.user);
-    // const fAuth = await this.authRepository.findOne(req.user.email);
     let user = await this.userService.getUserInfoByEmail(req.user.email);
-    console.log('-=-=-=-=-user in google login from db', user);
 
     const planFree = await this.planService.findOneByName('free');
     const createSubscrDto: CreateSubscriptionDto = {
@@ -72,7 +69,6 @@ export class AuthService {
         new Date().setMonth(new Date().getMonth() + 1),
       ),
     };
-    console.log('-=-=-=-=-=planFree in google login', planFree);
 
     if (!user) {
       user = await this.authRepository.createAuthUser(
@@ -89,7 +85,6 @@ export class AuthService {
         },
         createSubscrDto,
       );
-      console.log('-=-=-=-=-user in google login created', user);
     }
 
     return user;
@@ -278,7 +273,6 @@ export class AuthService {
 
   async initEmailVerify(email: string): Promise<{ message: string }> {
     const auth = await this.getAuthByEmail(email);
-    console.log('-=-=-=-=-=auth', auth);
     if (!auth) {
       throw new BadRequestException('User not found');
     }
@@ -290,7 +284,6 @@ export class AuthService {
     const otpDb = await this.otpRepository.findOne({
       where: { auth: { id: auth.id } },
     });
-    console.log('-=-=-=-=-=-=-otpDb', otpDb);
     if (otpDb && otpDb.expiration > new Date()) {
       return { message: 'Verification code was already send to email' };
     }
@@ -318,12 +311,10 @@ export class AuthService {
     const { otp, email } = verifyEmailDto;
 
     const auth = await this.getAuthByEmail(email);
-    console.log('-=-=-=-=-=auth', auth);
 
     const otpDb = await this.otpRepository.findOne({
       where: { auth: { id: auth.id } },
     });
-    console.log('-=-=-=-=-=-=-otpDb', otpDb);
 
     if (!otpDb) {
       throw new ForbiddenException(
@@ -371,15 +362,11 @@ export class AuthService {
     const otpPasswDb = await this.otpPasswRepository.findOne({
       where: { auth: { id: auth.id } },
     });
-    console.log('-=-=-=-=-=-=-otpPasswDb', otpPasswDb);
     if (otpPasswDb && otpPasswDb.expiration > new Date()) {
       return { message: 'Reset password code was already send to email' };
     }
 
     const otpCode = this.generateOtpCode();
-
-    console.log('-=-=-=-=-=- now', new Date(Date.now()));
-    console.log('-=-=-=-=-=- exp', new Date(Date.now() + 10 * 60 * 1000));
 
     await this.otpPasswRepository.upsert(
       { otp: otpCode, expiration: new Date(Date.now() + 10 * 60 * 1000), auth },

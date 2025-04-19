@@ -188,12 +188,6 @@ export class AuthController {
     return this.authService.resetPasswordGenerate(email);
   }
 
-  // @Get('reset-password/otp')
-  // validateResetOtp(@Query('otp') otp: string, @Query('email') email: string) {
-  //   console.log('-=-=-=-=-otp', otp, email);
-  //   return this.authService.validateResetOtp(otp, email);
-  // }
-
   @Post('confirm-reset-password')
   async confirmResetPassword(@Body() confirmResetPassw: ConfirmResetPassw) {
     return this.authService.confirmResetPassword(confirmResetPassw);

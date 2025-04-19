@@ -62,8 +62,6 @@ export class UserRepository {
   }
 
   async updatePassw(authId: string, passwhash: string) {
-    console.log('-=-=-=-=-=-=-auth id', authId);
-
     const user = await this.userRepository.findOne({
       where: { auth: { id: authId } },
     });

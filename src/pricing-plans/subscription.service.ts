@@ -18,12 +18,7 @@ export class SubscriptionService {
     private planService: PlanService,
   ) {}
   async create(createSubscrDto: CreateSubscriptionDto) {
-    console.log(
-      '=-=-=-=-=-=createSubscrDto  in create subscr',
-      createSubscrDto,
-    );
     const subscr = await this.subscriptionRepository.save(createSubscrDto);
-    console.log('-==-=-=-=-created subscr', subscr);
     return subscr;
   }
 
@@ -44,7 +39,6 @@ export class SubscriptionService {
       where: { user: { id: userId } },
       relations: ['plan'],
     });
-    console.log('-=-=-=-=-=-subcription', subscription);
     return subscription;
   }
 
@@ -53,7 +47,6 @@ export class SubscriptionService {
       where: { user: { id: userId } },
       relations: ['user'],
     });
-    console.log('=-=-=-=-=-=subscription', subscription);
 
     const plan = await this.planRepository.findOne({
       where: { id: paymentIntentDto.planId },

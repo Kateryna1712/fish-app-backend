@@ -33,10 +33,8 @@ export class LiqpayService {
       sandbox: '1', // 1 for test, 0 for prod
       info: 'bebraemail',
     };
-    console.log('-=-=-=-=-=-data', data);
 
     const dataStr = Buffer.from(JSON.stringify(data)).toString('base64');
-    console.log('-=-=-=-=-=-dataStr', dataStr);
     const signature = this.getSignature(dataStr);
 
     return {
@@ -47,8 +45,6 @@ export class LiqpayService {
   }
 
   async callback(body: { data: string; signature: string }) {
-    console.log('-=-=-=-=-=-callbackLiqpayDto', body);
-
     const { data, signature } = body;
 
     const calculatedSignature = this.getSignature(data);
@@ -60,8 +56,6 @@ export class LiqpayService {
     const decodedData = JSON.parse(
       Buffer.from(data, 'base64').toString('utf-8'),
     );
-    console.log('✅ decoded LiqPay data:', decodedData);
-
     return { status: 'ok' };
   }
 

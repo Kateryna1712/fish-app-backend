@@ -25,12 +25,10 @@ export class GoogleApiService {
       //   result_type: 'street_address',
       key: this.googleAPIKey,
     };
-    console.log('-=-=-=-=-=-geocodingDto', geocodingDto);
 
     const response = await firstValueFrom(
       this.httpService.get(`${this.googleUrl}/json`, { params }),
     );
-    console.log('-=-=-=-=-=-response', response.data);
     const resData = this.extractLocationDetails(response.data);
     return resData;
   }

@@ -14,7 +14,6 @@ import { UpdatePlaceDto } from './dto/update-place.dto';
 import { AuthGuard } from 'src/shared/auth-guard/auth.guard';
 import { Req } from '@nestjs/common';
 import { RequestWithUser } from 'src/UserAuthCommon/user/interfaces/user.interfaces';
-import { SubscriptionGuard } from 'src/shared/auth-guard/required.subscription.guard';
 import { RequiredSubscriptionType } from 'src/shared/auth-guard/decorators/subscription.decorator';
 import { RequestWithUserSubscr } from 'src/fish/interfaces/interfaces';
 

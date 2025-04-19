@@ -48,13 +48,10 @@ export class AuthRepository {
       //   subscriptions: [subscr],
       // });
 
-      // console.log('-=-=-=-=-=-=-updUser in create user T', updUser);
-
       await queryRunner.manager.save(Auth, {
         ...authData,
         user,
       });
-      console.log('--=-=-=-=-user', user);
       this.logger.debug(user);
 
       await queryRunner.commitTransaction();

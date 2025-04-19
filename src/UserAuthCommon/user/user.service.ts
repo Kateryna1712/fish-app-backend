@@ -22,7 +22,6 @@ export class UserService {
 
   async isUserExist(id: string): Promise<User> {
     const user = await this.userRepository.findOne(id);
-    console.log('-=-=-=-=-user in is user exist', user);
 
     return user;
   }
@@ -32,7 +31,6 @@ export class UserService {
   //todo create in repo universal method for getting by id and by email
   async getUserInfoById(userId: string) {
     const user = await this.userRepository.getMe(userId);
-    console.log('-=-=-=-=-user in getUserInfoById', user);
     return user;
   }
 
@@ -44,10 +42,6 @@ export class UserService {
     return this.userRepository
       .updateUser(userId, updateUserDto)
       .catch((err) => {
-        console.log('--=-=-=-=-err name', err.name);
-        console.log('--=-=-=-=-err status', err.status);
-        console.log('--=-=-=-=-err message', err.message);
-        console.log('--=-=-=-=-err code', err.code);
         if (err.code === '23505') {
           throw new BadRequestException('Bad data error');
         }
@@ -62,8 +56,6 @@ export class UserService {
     const user = await this.userRepository.findOne(userId, true);
     // if (user.password !== changePasswordDto.oldPassword) {
     // }
-
-    console.log('-=-=-=-=-user', user);
 
     const isAuth = await bcrypt.compare(
       changePasswordDto.oldPassword,
