@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { parseISO, getUnixTime } from 'date-fns';
 
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
@@ -47,7 +48,6 @@ export class WeatherService {
 
       return response.data;
     } catch (error) {
-      console.log('-=-=-=-=-=-getSunData', error);
       throw new Error(`Failed to fetch sun data: ${error.message}`);
     }
   }
@@ -66,21 +66,6 @@ export class WeatherService {
         this.httpService.get(`${this.openWeatherApiUrl}/onecall`, { params }),
       );
       const data = response.data;
-
-      // console.log('-=-=-=-=-=-=-=-=-weathre reeeessssponse', response);
-
-      // console.log('-=-=-=-=-=-=-=-=-weathre data', data);
-
-      // const today = data.daily[0];
-      // const weatherDetails = {
-      //   temperature: data.temp.day,
-      //   windSpeed: data.wind_speed,
-      //   windDirection: data.wind_deg,
-      //   moonPhase: data.moon_phase,
-      //   sunrise: data.sunrise,
-      //   sunset: today.sunset,
-      // };
-      // console.log('-=-=-=-=-=-weatherDetails', weatherDetails);
 
       return data;
     } catch (error) {
@@ -135,17 +120,15 @@ export class WeatherService {
         const currentDate = new Date(item.dt * 1000)
           .toISOString()
           .split('T')[0];
-        console.log('current-=-=-=', currentDate);
-        console.log('param--=-date', date.split('T')[0]);
-        return currentDate !== date.split('T')[0];
+        return currentDate === date;
       });
 
+      console.log('date', date);
+
       const finalDate =
-        new Date(Date.now()).toISOString().split('T')[0] === date.split('T')[0]
+        new Date(Date.now()).toISOString().split('T')[0] === date
           ? data.current
           : foundDay;
-
-      console.log('99999999', foundDay);
 
       const utcTimeSunrise = finalDate.sunrise;
       const utcTimeSunset = finalDate.sunset;
@@ -209,6 +192,7 @@ export class WeatherService {
     lon: number,
     date: string,
   ): Promise<IDailyWeather> {
+    console.log('weather date=-=--=', date);
     const params = {
       lat: lat,
       lon: lon,
@@ -224,9 +208,6 @@ export class WeatherService {
         }),
       );
       const data = response.data;
-
-      // console.log('-=-=-=-=-=-=-=dayli data', data);
-
       return data;
     } catch (error) {
       console.log('-=-=-=-=-=-=-=-=-=-eerrror', error);
@@ -237,7 +218,6 @@ export class WeatherService {
   private convertTime(utcTime: number, timezoneOffset: number) {
     // console.log('-=-=-=-==-in convert time', utcTime, timezoneOffset);
     const dateTime = new Date((utcTime + timezoneOffset) * 1000);
-    console.log('=-=-=-=-=-dateTime', dateTime);
     const date = dateTime.toLocaleDateString('en-GB');
     const time = dateTime.toLocaleTimeString('en-GB', {
       hour: '2-digit',

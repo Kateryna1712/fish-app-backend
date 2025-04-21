@@ -39,14 +39,12 @@ export class FishController {
 
   @Get('sun')
   async getSunData(@Query() geocodingDto: GeocodingDto) {
-    console.log('-=-=-=-=-=-geocodingDto', geocodingDto);
     return this.weatherService.getSunData(geocodingDto.lat, geocodingDto.lon);
   }
 
   @UseGuards(AuthGuard)
   @Get('navigational-twilight')
   async getNavigationalTwilight(@Query() astroTimesDto: AstroTimesDto) {
-    console.log('-=-=-=-=-=-geocodingDto', astroTimesDto);
     return this.weatherService.getNavigationalTwilight(
       astroTimesDto.lat,
       astroTimesDto.lon,
@@ -80,9 +78,6 @@ export class FishController {
     @Req() req: RequestWithUserSubscr,
     @Query() getCurWeatherDto: GetCurWeatherDto,
   ) {
-    console.log('0--==-=-=-=-=-get forecast dto', getCurWeatherDto);
-    console.log('0--==-=-=-=-=-req.subscrType', req.subscrType);
-
     const data = await this.weatherService.getHourlyWeatherData(
       getCurWeatherDto.lat,
       getCurWeatherDto.lon,
@@ -91,14 +86,8 @@ export class FishController {
     if (req.subscrType === 'free') {
       data.hourly = data.hourly.slice(0, 24);
     }
-
-    // const forecast =
-    //   this.forecastService.calculateFishingProbability(weatherData);
-
-    // console.log('-=-=-=-=-data', data);
     data.hourly.forEach((element) => {
       const forecast = this.forecastService.fishForecastHourly(element);
-      console.log('_+-=-=-=-=-=-element', element);
       element.forecast = forecast;
     });
     return data;
@@ -113,8 +102,6 @@ export class FishController {
     @Req() req: RequestWithUserSubscr,
     @Query() dailyForecastDto: DailyForecastDto,
   ) {
-    console.log('0--==-=-=-=-=- dailyForecastDto dto', dailyForecastDto);
-
     let datesArr: string[];
     if (req.subscrType === 'pro') {
       datesArr = this.forecastService.generateDateArray(
@@ -127,8 +114,6 @@ export class FishController {
         3,
       );
     }
-    console.log('-=-=-=-=-=datesArr', datesArr);
-
     const weatherArrPromises = datesArr.map((date) => {
       return this.weatherService.getDailyWeatherData(
         dailyForecastDto.lat,
@@ -138,12 +123,10 @@ export class FishController {
     });
 
     const data = await Promise.all(weatherArrPromises);
-    console.log('-=-=-=-=-=res', data);
 
     if (req.subscrType === 'pro') {
       data.forEach((element) => {
         const forecast = this.forecastService.fishForecastDaily(element);
-        console.log('_+-=-=-=-=-=-element', element);
         element.date = this.forecastService.swapDateElements(element.date);
         element.forecast = forecast;
       });
@@ -166,18 +149,14 @@ export class FishController {
       10,
     );
 
-    const weatherArrPromises = datesArr.map((date) => {
-      return this.weatherService.getDailyWeatherData(
-        dailyForecastDto.lat,
-        dailyForecastDto.lon,
-        date,
-      );
-    });
+    const data = await this.weatherService.getDailyWeatherData(
+      dailyForecastDto.lat,
+      dailyForecastDto.lon,
+      dailyForecastDto.date,
+    );
+    console.log(data);
 
-    const data = await Promise.all(weatherArrPromises);
-
-    return data;
-    // return mainWeatherMock;
+    return [{ ...data }];
   }
 
   @UseGuards(AuthGuard, SubscriptionGuard)
@@ -306,7 +285,7 @@ export class FishController {
       const groupedBestDays = [];
       let currentPeriod = null;
 
-      bestDays.forEach((day, index) => {
+      bestDays.forEach((day) => {
         if (!currentPeriod) {
           currentPeriod = {
             date: day.date,
@@ -334,17 +313,10 @@ export class FishController {
       if (currentPeriod) {
         groupedBestDays.push(currentPeriod);
       }
-
-      // console.log('Grouped Best Days:', groupedBestDays);
-      // console.log('Overall Highest Forecast:', highestForecast);
-
-      // Generate graphical representation
-      // console.log('Forecast Graph:');
       data.forEach((element) => {
         const date = element.date;
         const forecast = element.forecast;
         const bar = '█'.repeat(Math.round(forecast / 2)); // Scale the forecast value for the bar length
-        // console.log(`${date} | ${bar} ${forecast}`);
       });
 
       return { groupedBestDays, data };

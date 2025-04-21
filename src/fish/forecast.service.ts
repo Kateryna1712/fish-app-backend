@@ -80,8 +80,8 @@ export class ForecastService {
       windSpeedScore +
       windDirectionScore +
       temperatureScore +
-      moonPhaseScore
-      //timeOfDayScore;
+      moonPhaseScore;
+    //timeOfDayScore;
 
     return Math.round(totalProbability * 100);
   }
