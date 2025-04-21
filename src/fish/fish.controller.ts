@@ -61,7 +61,12 @@ export class FishController {
       getCurWeatherDto.date,
     );
 
-    data.forecast = this.forecastService.fishForecastCurr(data);
+    data.forecast = await this.forecastService.fishForecastCurr(
+      getCurWeatherDto.lat,
+      getCurWeatherDto.lon,
+      getCurWeatherDto.lang,
+      getCurWeatherDto.date,
+    );
 
     data.region = await this.weatherService.getRegion(
       getCurWeatherDto.lat,
@@ -154,8 +159,6 @@ export class FishController {
       dailyForecastDto.lon,
       dailyForecastDto.date,
     );
-    console.log(data);
-
     return [{ ...data }];
   }
 

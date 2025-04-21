@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { parseISO, getUnixTime } from 'date-fns';
 
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
@@ -123,7 +122,7 @@ export class WeatherService {
         return currentDate === date;
       });
 
-      console.log('date', date);
+      console.log(foundDay);
 
       const finalDate =
         new Date(Date.now()).toISOString().split('T')[0] === date
@@ -192,7 +191,6 @@ export class WeatherService {
     lon: number,
     date: string,
   ): Promise<IDailyWeather> {
-    console.log('weather date=-=--=', date);
     const params = {
       lat: lat,
       lon: lon,

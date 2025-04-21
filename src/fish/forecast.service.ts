@@ -1,12 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { IDailyWeather, IHourlyWeather } from './interfaces/interfaces';
-import { IForecastDataRes } from './interfaces/currentForecast.interfaces';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ForecastService {
-  constructor() {}
+  private openWeatherApiUrl: string;
+  private openWeatherApiUrl2: string;
+  private sunrisesunsetIoUrl: string;
 
-  fishForecastCurr(data: IForecastDataRes): number {
+  private openWeatherApiKey: string;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private configService: ConfigService,
+  ) {
+    this.openWeatherApiUrl = this.configService.get('OPEN_WEATHER_URL');
+    this.openWeatherApiKey = this.configService.get('OPEN_WEATHER_API_KEY');
+  }
+
+  async fishForecastCurr(
+    lat: number,
+    lon: number,
+    lang?: string,
+    date?: string,
+  ): Promise<number> {
+    const params = {
+      lat: lat,
+      lon: lon,
+      exclude: 'minutely,hourly,alerts',
+      appid: this.openWeatherApiKey,
+      units: 'metric',
+      lang: lang,
+    };
+    const res = await firstValueFrom(
+      this.httpService.get(`${this.openWeatherApiUrl}/onecall`, {
+        params,
+      }),
+    );
+
+    const data = res.data;
+
+    const foundValue = data.daily.find((item) => {
+      return new Date(item.dt * 1000).toISOString().split('T')[0] === date;
+    });
+
+    const finalValue = !foundValue ? data.current : foundValue;
+
     const weights = {
       pressure: 0.3,
       windSpeed: 0.15,
@@ -56,11 +97,11 @@ export class ForecastService {
     };
 
     const pressureScore =
-      normalizePressure(data.current.pressure) * weights.pressure;
+      normalizePressure(finalValue.pressure) * weights.pressure;
     const windSpeedScore =
-      normalizeWindSpeed(data.current.wind_speed) * weights.windSpeed;
+      normalizeWindSpeed(finalValue.wind_speed) * weights.windSpeed;
     const windDirectionScore =
-      normalizeWindDirection(data.current.wind_deg) * weights.windDirection;
+      normalizeWindDirection(finalValue.wind_deg) * weights.windDirection;
     const temperatureScore =
       normalizeTemperature(data.current.temp) * weights.temperature;
 
@@ -81,7 +122,6 @@ export class ForecastService {
       windDirectionScore +
       temperatureScore +
       moonPhaseScore;
-    //timeOfDayScore;
 
     return Math.round(totalProbability * 100);
   }
