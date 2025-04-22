@@ -88,13 +88,16 @@ export class ForecastService {
         normalizeTimeOfDay(currentTime, sunriseTime, sunsetTime) *
         weights.timeOfDay;
 
+      const randomValue = (Math.floor(Math.random() * 6) + 1) / 100;
+
       const totalProbability =
         pressureScore +
         windSpeedScore +
         windDirectionScore +
         temperatureScore +
         moonPhaseScore +
-        timeOfDayScore;
+        timeOfDayScore +
+        randomValue;
 
       // Log individual scores for debugging
       console.log('Scores:', {
