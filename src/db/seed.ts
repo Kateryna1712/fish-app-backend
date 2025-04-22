@@ -21,7 +21,7 @@ const plans: PlanInterface[] = [
     placesNumber: 2,
   },
   {
-    name: 'free',
+    name: 'pro',
     price: 20,
     currency: 'UAH',
     description:
