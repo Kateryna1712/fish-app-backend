@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class PayLiqpayDto {
   @ApiProperty()

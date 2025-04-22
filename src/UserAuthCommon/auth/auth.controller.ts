@@ -28,7 +28,6 @@ import { SignInDto } from './dto/sign-in.dto';
 import { UserService } from 'src/UserAuthCommon/user/user.service';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { AuthGuard } from 'src/shared/auth-guard/auth.guard';
-import { EmailService } from 'src/3d-party/email/email.service';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ConfirmResetPassw } from './dto/confitm-reset-passw.dto';
 

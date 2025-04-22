@@ -3,6 +3,14 @@ import { IDailyWeather, IHourlyWeather } from './interfaces/interfaces';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import {
+  normalizePressure,
+  normalizeWindSpeed,
+  normalizeWindDirection,
+  normalizeTemperature,
+  normalizeMoonPhase,
+  normalizeTimeOfDay,
+} from './utils/weather.utils';
 
 @Injectable()
 export class ForecastService {
@@ -49,6 +57,8 @@ export class ForecastService {
 
       const finalValue = !foundValue ? data.current : foundValue;
 
+      console.log('finalValue=--=-==-', finalValue);
+
       const weights = {
         pressure: 0.3,
         windSpeed: 0.15,
@@ -58,45 +68,6 @@ export class ForecastService {
         timeOfDay: 0.1,
       };
 
-      const normalizePressure = (pressure: number): number => {
-        if (Math.abs(pressure - 1013) <= 2) return 1;
-        if (Math.abs(pressure - 1013) <= 5) return 0.7;
-        return 0;
-      };
-
-      const normalizeWindSpeed = (speed: number): number => {
-        return speed >= 3 && speed <= 5 ? 1 : 0.5;
-      };
-      const normalizeWindDirection = (windDeg: number): number => {
-        if (windDeg >= 225 && windDeg < 315) return 1.0; // Південно-західний
-        if (windDeg >= 270 && windDeg < 360) return 0.8; // Західний
-        if (windDeg >= 135 && windDeg < 225) return 0.6; // Південний
-        if (windDeg >= 45 && windDeg < 135) return 0.4; // Східний
-        return 0; // Північний та інші
-      };
-
-      const normalizeTemperature = (temp: number): number => {
-        return temp >= 12 && temp <= 18 ? 1 : 0.5;
-      };
-
-      const normalizeMoonPhase = (phase: number): number => {
-        return phase === 1 || phase === 0 || phase === 0.5 ? 1 : 0.5;
-      };
-
-      // const normalizeTimeOfDay = (
-      //   time: Date,
-      //   sunrise: Date,
-      //   sunset: Date,
-      // ): number => {
-      //   const hour = time.getHours();
-
-      //   if (time >= sunrise && time <= sunset) {
-      //     return (hour >= 6 && hour < 9) || (hour >= 17 && hour < 20) ? 1 : 0.5;
-      //   } else {
-      //     return 0.4;
-      //   }
-      // };
-
       const pressureScore =
         normalizePressure(finalValue.pressure) * weights.pressure;
       const windSpeedScore =
@@ -104,29 +75,42 @@ export class ForecastService {
       const windDirectionScore =
         normalizeWindDirection(finalValue.wind_deg) * weights.windDirection;
       const temperatureScore =
-        normalizeTemperature(data.current.temp) * weights.temperature;
-
-      ///moonoahse hardcoded
+        normalizeTemperature(finalValue.temp) * weights.temperature;
       const moonPhaseScore =
-        normalizeMoonPhase(data.daily.moon_phase) * weights.moonPhase;
+        normalizeMoonPhase(finalValue.moon_phase) * weights.moonPhase;
 
-      // const timeOfDayScore =
-      //   normalizeTimeOfDay(
-      //     data.current.dateTime,
-      //     data.current.sunriseTime,
-      //     data.current.sunriseTime,
-      //   ) * weights.timeOfDay;
+      // Calculate time of day score
+      const currentTime = new Date();
+      const sunriseTime = new Date(finalValue.sunrise * 1000);
+      const sunsetTime = new Date(finalValue.sunset * 1000);
+
+      const timeOfDayScore =
+        normalizeTimeOfDay(currentTime, sunriseTime, sunsetTime) *
+        weights.timeOfDay;
 
       const totalProbability =
         pressureScore +
         windSpeedScore +
         windDirectionScore +
         temperatureScore +
-        moonPhaseScore;
+        moonPhaseScore +
+        timeOfDayScore;
+
+      // Log individual scores for debugging
+      console.log('Scores:', {
+        pressureScore,
+        windSpeedScore,
+        windDirectionScore,
+        temperatureScore,
+        moonPhaseScore,
+        timeOfDayScore,
+        totalProbability,
+      });
 
       return Math.round(totalProbability * 100);
     } catch (e) {
-      console.log(e);
+      console.error('Error in fishForecastCurr:', e);
+      throw e;
     }
   }
 

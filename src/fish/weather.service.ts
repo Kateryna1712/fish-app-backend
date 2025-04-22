@@ -10,6 +10,14 @@ import {
   IForecastDataRes,
   IRegion2,
 } from './interfaces/currentForecast.interfaces';
+import {
+  normalizePressure,
+  normalizeWindSpeed,
+  normalizeWindDirection,
+  normalizeTemperature,
+  normalizeMoonPhase,
+  normalizeTimeOfDay,
+} from './utils/weather.utils';
 //  https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude={part}&appid={API key}
 
 @Injectable()
@@ -271,5 +279,91 @@ export class WeatherService {
       nauticalDawn: times.nauticalDawn,
       nauticalDusk: times.nauticalDusk,
     };
+  }
+
+  async fishForecastCurr(
+    lat: number,
+    lon: number,
+    lang?: string,
+    date?: string,
+  ): Promise<number> {
+    try {
+      const params = {
+        lat: lat,
+        lon: lon,
+        exclude: 'minutely,hourly,alerts',
+        appid: this.openWeatherApiKey,
+        units: 'metric',
+        lang: lang,
+      };
+      const res = await firstValueFrom(
+        this.httpService.get(`${this.openWeatherApiUrl}/onecall`, {
+          params,
+        }),
+      );
+
+      const data = res.data;
+
+      const foundValue = data.daily.find((item) => {
+        return new Date(item.dt * 1000).toISOString().split('T')[0] === date;
+      });
+
+      const finalValue = !foundValue ? data.current : foundValue;
+
+      console.log('finalValue=--=-==-', finalValue);
+
+      const weights = {
+        pressure: 0.3,
+        windSpeed: 0.15,
+        windDirection: 0.1,
+        temperature: 0.2,
+        moonPhase: 0.15,
+        timeOfDay: 0.1,
+      };
+
+      const pressureScore =
+        normalizePressure(finalValue.pressure) * weights.pressure;
+      const windSpeedScore =
+        normalizeWindSpeed(finalValue.wind_speed) * weights.windSpeed;
+      const windDirectionScore =
+        normalizeWindDirection(finalValue.wind_deg) * weights.windDirection;
+      const temperatureScore =
+        normalizeTemperature(finalValue.temp) * weights.temperature;
+      const moonPhaseScore =
+        normalizeMoonPhase(finalValue.moon_phase) * weights.moonPhase;
+
+      // Calculate time of day score
+      const currentTime = new Date();
+      const sunriseTime = new Date(finalValue.sunrise * 1000);
+      const sunsetTime = new Date(finalValue.sunset * 1000);
+
+      const timeOfDayScore =
+        normalizeTimeOfDay(currentTime, sunriseTime, sunsetTime) *
+        weights.timeOfDay;
+
+      const totalProbability =
+        pressureScore +
+        windSpeedScore +
+        windDirectionScore +
+        temperatureScore +
+        moonPhaseScore +
+        timeOfDayScore;
+
+      // Log individual scores for debugging
+      console.log('Scores:', {
+        pressureScore,
+        windSpeedScore,
+        windDirectionScore,
+        temperatureScore,
+        moonPhaseScore,
+        timeOfDayScore,
+        totalProbability,
+      });
+
+      return Math.round(totalProbability * 100);
+    } catch (e) {
+      console.error('Error in fishForecastCurr:', e);
+      throw e;
+    }
   }
 }

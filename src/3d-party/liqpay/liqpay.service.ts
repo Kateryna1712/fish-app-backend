@@ -53,9 +53,9 @@ export class LiqpayService {
       throw new UnauthorizedException('Invalid signature');
     }
 
-    const decodedData = JSON.parse(
-      Buffer.from(data, 'base64').toString('utf-8'),
-    );
+    // const decodedData = JSON.parse(
+    //   Buffer.from(data, 'base64').toString('utf-8'),
+    // );
     return { status: 'ok' };
   }
 
