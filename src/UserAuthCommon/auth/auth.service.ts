@@ -103,7 +103,7 @@ export class AuthService {
 
       const passwordHash = await bcrypt.hash(password, 10);
 
-      const planFree = await this.planService.findOneByName('Free');
+      const planFree = await this.planService.findOneByName('free');
       if (!planFree) {
         throw new HttpException(
           'Free plan not found in database',
