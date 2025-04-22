@@ -115,6 +115,19 @@ export class WeatherService {
       );
       const data = response.data;
 
+      // Log the incoming date and data for debugging
+      console.log('Incoming date:', date);
+      console.log(
+        'Current date:',
+        new Date(Date.now()).toISOString().split('T')[0],
+      );
+      console.log(
+        'Daily forecast dates:',
+        data.daily.map(
+          (item) => new Date(item.dt * 1000).toISOString().split('T')[0],
+        ),
+      );
+
       const foundDay = data.daily.find((item) => {
         const currentDate = new Date(item.dt * 1000)
           .toISOString()
@@ -122,36 +135,48 @@ export class WeatherService {
         return currentDate === date;
       });
 
-      console.log(foundDay);
+      // Log the found day for debugging
+      console.log('Found day:', foundDay);
 
-      const finalDate =
-        new Date(Date.now()).toISOString().split('T')[0] === date
-          ? data.current
-          : foundDay;
+      const currentDate = new Date(Date.now()).toISOString().split('T')[0];
+      const finalDate = currentDate === date ? data.current : foundDay;
+
+      // Log the final date for debugging
+      console.log('Final date:', finalDate);
+
+      if (!finalDate) {
+        throw new Error(`No weather data found for date: ${date}`);
+      }
 
       const utcTimeSunrise = finalDate.sunrise;
       const utcTimeSunset = finalDate.sunset;
-
       const utcTime = finalDate.dt;
+
+      if (!utcTimeSunrise || !utcTimeSunset || !utcTime) {
+        throw new Error('Missing required time data from weather response');
+      }
 
       data.current.sunriseTime = this.convertTime2(utcTimeSunrise);
       data.current.sunsetTime = this.convertTime2(utcTimeSunset);
-
       finalDate.dateTime = this.convertTime2(utcTime);
-      console.log('-=-=-=-=-=-=-=-date current', data.current.dateTime);
 
       const utcTimeMoonrise = data.daily[0].moonrise;
       const utcTimeMonnset = data.daily[0].moonset;
       const utcTimeDailyDate = data.daily[0].dt;
 
-      data.daily[0].moonriseTime = this.convertTime2(utcTimeMoonrise);
+      if (!utcTimeMoonrise || !utcTimeMonnset || !utcTimeDailyDate) {
+        throw new Error(
+          'Missing required moon time data from weather response',
+        );
+      }
 
+      data.daily[0].moonriseTime = this.convertTime2(utcTimeMoonrise);
       data.daily[0].moonsetTime = this.convertTime2(utcTimeMonnset);
       data.daily[0].dateTime = this.convertTime2(utcTimeDailyDate);
 
       return { ...data, current: data.current, daily: data.daily[0] };
     } catch (error) {
-      console.log('-=-=-=-=-=-=-=-=-=-eerrror', error);
+      console.error('Weather data fetch error:', error);
       throw new Error(`Failed to fetch weather data: ${error.message}`);
     }
   }
