@@ -18,7 +18,12 @@ import { SubscriptionLiqpayService } from './subscription-liqpay.service';
     LiqpayModule,
   ],
   controllers: [PlanController, SubscriptionController],
-  providers: [PlanService, SubscriptionService, SubscriptionLiqpayService],
-  exports: [PlanService, SubscriptionService],
+  providers: [
+    PlanService,
+    SubscriptionService,
+    SubscriptionLiqpayService,
+    Plan,
+  ],
+  exports: [PlanService, SubscriptionService, TypeOrmModule],
 })
 export class PlanModule {}

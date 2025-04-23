@@ -28,6 +28,6 @@ import { Place } from 'src/place/entities/place.entity';
   ],
   controllers: [AuthController, UserController],
   providers: [AuthService, AuthRepository, UserService, UserRepository],
-  exports: [UserService],
+  exports: [UserService, UserRepository],
 })
 export class UserAuthCommonModule {}

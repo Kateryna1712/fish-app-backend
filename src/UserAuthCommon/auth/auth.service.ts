@@ -255,7 +255,7 @@ export class AuthService {
       );
 
       return accessToken;
-    } catch (error) {
+    } catch {
       throw new HttpException('Token was not verify', HttpStatus.UNAUTHORIZED);
     }
   }
@@ -263,7 +263,7 @@ export class AuthService {
   async isUserExist(userId: string): Promise<User> {
     try {
       return this.userService.isUserExist(userId);
-    } catch (error) {
+    } catch {
       throw new HttpException(
         'An error occurred while check user.',
         HttpStatus.INTERNAL_SERVER_ERROR,

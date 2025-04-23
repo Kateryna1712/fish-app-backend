@@ -50,6 +50,7 @@ export class UserRepository {
     return this.userRepository.findOne({
       where: { email },
       select: { id: true, name: true, email: true, password: true },
+      relations: ['subscriptions'],
     });
   }
 

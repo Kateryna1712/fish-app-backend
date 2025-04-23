@@ -23,7 +23,7 @@ export class PlaceService {
       const plan = await this.planService.findOneByName(subscrType);
       if (!plan) throw new NotFoundException(`Plan ${subscrType} not found`);
 
-      const places = await this.findAllUserPlaces(userId);
+      // const places = await this.findAllUserPlaces(userId);
 
       // if (places.length >= plan.placesNumber) {
       //   throw new ForbiddenException('Limit error', {
