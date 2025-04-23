@@ -5,7 +5,7 @@ export class LiqpayDto {
   email: string;
 
   @IsString()
-  amount: string;
+  plan_type: string;
 
   @IsString()
   @IsOptional()

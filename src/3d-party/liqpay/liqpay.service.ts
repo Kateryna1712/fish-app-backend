@@ -36,7 +36,7 @@ export class LiqpayService {
   async test(dto: LiqpayDto) {
     const foundUser = await this.userRepository.findOneByEmail(dto.email);
 
-    const plan = await this.planService.findOneByName('pro');
+    const plan = await this.planService.findOneByName(dto.plan_type);
 
     if (!plan) {
       throw new HttpException(
@@ -44,12 +44,15 @@ export class LiqpayService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    if (plan.name === foundUser.subscriptions[0].type) {
+      return { err_description: 'Subscription is the same as current' };
+    }
+
     const now = new Date();
     const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 
     const self = this;
-
-    console.log(dto, plan);
 
     return new Promise((resolve) => {
       this.liqpay.api(
