@@ -71,7 +71,8 @@ export class LiqpayService {
         },
         function (response) {
           self.subscriptionRepository.update(foundUser.subscriptions[0].id, {
-            plan: { id: plan.id, name: plan.name },
+            type: plan.name,
+            plan: { id: plan.id },
           });
           resolve(response);
         },
