@@ -383,11 +383,7 @@ export class AuthService {
       where: { auth: { email: confirmResetPassw.email } },
     });
 
-    await this.validateResetOtp(
-      otpDb,
-      confirmResetPassw.otp,
-      confirmResetPassw.email,
-    );
+    await this.validateResetOtp(otpDb, confirmResetPassw.otp);
 
     if (confirmResetPassw.newPassword !== confirmResetPassw.repNewPassword) {
       throw new ForbiddenException('Passwords do not match');
@@ -409,7 +405,7 @@ export class AuthService {
     return this.authRepository.findOne(email);
   }
 
-  async validateResetOtp(otpDb: OtpPassw, otp: string, email: string) {
+  async validateResetOtp(otpDb: OtpPassw, otp: string) {
     if (
       !otpDb ||
       !otpDb.otp ||

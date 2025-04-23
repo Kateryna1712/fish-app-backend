@@ -57,8 +57,6 @@ export class ForecastService {
 
       const finalValue = !foundValue ? data.current : foundValue;
 
-      console.log('finalValue=--=-==-', finalValue);
-
       const weights = {
         pressure: 0.3,
         windSpeed: 0.15,
@@ -98,17 +96,6 @@ export class ForecastService {
         moonPhaseScore +
         timeOfDayScore +
         randomValue;
-
-      // Log individual scores for debugging
-      console.log('Scores:', {
-        pressureScore,
-        windSpeedScore,
-        windDirectionScore,
-        temperatureScore,
-        moonPhaseScore,
-        timeOfDayScore,
-        totalProbability,
-      });
 
       return Math.round(totalProbability * 100);
     } catch (e) {

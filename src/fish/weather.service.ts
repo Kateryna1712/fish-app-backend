@@ -44,11 +44,6 @@ export class WeatherService {
         lat: lat,
         lng: lon,
       };
-      console.log(
-        '-=-=-=-=-=-this.sunrisesunsetIoUrlб params',
-        this.sunrisesunsetIoUrl,
-        params,
-      );
       const response = await firstValueFrom(
         this.httpService.get(`${this.sunrisesunsetIoUrl}`, { params }),
       );
@@ -122,20 +117,6 @@ export class WeatherService {
         ),
       );
       const data = response.data;
-
-      // Log the incoming date and data for debugging
-      console.log('Incoming date:', date);
-      console.log(
-        'Current date:',
-        new Date(Date.now()).toISOString().split('T')[0],
-      );
-      console.log(
-        'Daily forecast dates:',
-        data.daily.map(
-          (item) => new Date(item.dt * 1000).toISOString().split('T')[0],
-        ),
-      );
-
       const foundDay = data.daily.find((item) => {
         const currentDate = new Date(item.dt * 1000)
           .toISOString()
@@ -143,14 +124,8 @@ export class WeatherService {
         return currentDate === date;
       });
 
-      // Log the found day for debugging
-      console.log('Found day:', foundDay);
-
       const currentDate = new Date(Date.now()).toISOString().split('T')[0];
       const finalDate = currentDate === date ? data.current : foundDay;
-
-      // Log the final date for debugging
-      console.log('Final date:', finalDate);
 
       if (!finalDate) {
         throw new Error(`No weather data found for date: ${date}`);
@@ -247,7 +222,6 @@ export class WeatherService {
   }
 
   private convertTime(utcTime: number, timezoneOffset: number) {
-    // console.log('-=-=-=-==-in convert time', utcTime, timezoneOffset);
     const dateTime = new Date((utcTime + timezoneOffset) * 1000);
     const date = dateTime.toLocaleDateString('en-GB');
     const time = dateTime.toLocaleTimeString('en-GB', {
@@ -259,15 +233,7 @@ export class WeatherService {
   }
 
   private convertTime2(utcTime: number) {
-    // console.log('-=-=-=-==-in convert time', utcTime, timezoneOffset);
     const dateTime = new Date(utcTime * 1000);
-    console.log('=-=-=-=-=-dateTime', dateTime);
-
-    // const date = dateTime.toLocaleDateString('en-GB');
-    // const time = dateTime.toLocaleTimeString('en-GB', {
-    //   hour: '2-digit',
-    //   minute: '2-digit',
-    // });
 
     return dateTime;
   }

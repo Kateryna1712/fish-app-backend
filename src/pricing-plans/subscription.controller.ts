@@ -5,7 +5,6 @@ import { SubscriptionService } from './subscription.service';
 import { PaymentIntentDto } from 'src/3d-party/stripe/dto/payment-intent.dto';
 import { RequestWithUser } from 'src/UserAuthCommon/user/interfaces/user.interfaces';
 import { AuthGuard } from 'src/shared/auth-guard/auth.guard';
-import { PayLiqpayDto } from 'src/3d-party/liqpay/dto/pay-liqpay.dto';
 import { SubscriptionLiqpayService } from './subscription-liqpay.service';
 
 @Controller('subscr')
@@ -22,18 +21,6 @@ export class SubscriptionController {
     @Body() paymentIntentDto: PaymentIntentDto,
   ) {
     return this.subscrService.paySubscription(request.userId, paymentIntentDto);
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('pay-liqpay')
-  async paySubscriptionLiqpay(
-    @Req() request: RequestWithUser,
-    @Body() payLiqpayDto: PayLiqpayDto,
-  ) {
-    // return this.subscriptionLiqpayService.paySubscription(
-    //   request.userId,
-    //   payLiqpayDto,
-    // );
   }
 
   @UseGuards(AuthGuard)
