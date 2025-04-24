@@ -54,6 +54,48 @@ export class LiqpayService {
 
     const self = this;
 
+    if (plan.name === 'free') {
+      return new Promise((resolve, reject) => {
+        this.liqpay.api(
+          'request',
+          {
+            action: 'unsubscribe',
+            version: '3',
+            amount: String(plan.price),
+            currency: plan.currency,
+            description: dto.description,
+            order_id: foundUser.subscriptions[0].stripeSubscriptionId,
+            subscribe: '1',
+            subscribe_date_start: formattedDate,
+            subscribe_periodicity: 'month',
+            card: dto.card,
+            card_exp_month: dto.card_exp_month,
+            card_exp_year: dto.card_exp_year,
+            card_cvv: dto.card_cvv,
+          },
+
+          (response: any) => {
+            if (response.result === 'ok') {
+              self.subscriptionRepository.update(
+                foundUser.subscriptions[0].id,
+                {
+                  type: plan.name,
+                  plan: { id: plan.id },
+                },
+              );
+              resolve(response);
+            } else {
+              reject(
+                new Error(
+                  `Subscription failed: ${response.err_description || 'Unknown error'}`,
+                ),
+              );
+            }
+          },
+        );
+      });
+    }
+
     return new Promise((resolve) => {
       this.liqpay.api(
         'request',
@@ -73,10 +115,13 @@ export class LiqpayService {
           card_cvv: dto.card_cvv,
         },
         function (response) {
-          self.subscriptionRepository.update(foundUser.subscriptions[0].id, {
-            type: plan.name,
-            plan: { id: plan.id },
-          });
+          if (response.result === 'ok') {
+            self.subscriptionRepository.update(foundUser.subscriptions[0].id, {
+              type: plan.name,
+              stripeSubscriptionId: formattedDate,
+              plan: { id: plan.id },
+            });
+          }
           resolve(response);
         },
       );
