@@ -4,7 +4,6 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { IDailyWeather } from './interfaces/interfaces';
-import * as SunCalc from 'suncalc';
 import {
   IForecastData,
   IForecastDataRes,
@@ -239,11 +238,35 @@ export class WeatherService {
   }
 
   async getNavigationalTwilight(lat: number, lon: number, date: Date) {
-    const times = SunCalc.getTimes(new Date(date), lat, lon);
+    const yyyy = date.getUTCFullYear();
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(date.getUTCDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+
+    const url = `https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&date=${dateStr}&formatted=0`;
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(
+        `Sunrise‑Sunset API error: ${res.status} ${res.statusText}`,
+      );
+    }
+
+    const payload = (await res.json()) as {
+      status: string;
+      results: {
+        nautical_twilight_begin: string;
+        nautical_twilight_end: string;
+      };
+    };
+
+    if (payload.status !== 'OK') {
+      throw new Error(`Sunrise‑Sunset API returned status ${payload.status}`);
+    }
 
     return {
-      nauticalDawn: times.nauticalDawn,
-      nauticalDusk: times.nauticalDusk,
+      nauticalDawn: new Date(payload.results.nautical_twilight_begin),
+      nauticalDusk: new Date(payload.results.nautical_twilight_end),
     };
   }
 
