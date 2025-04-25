@@ -14,7 +14,7 @@ const plans: PlanInterface[] = [
   {
     name: 'free',
     price: 0,
-    currency: 'UAH',
+    currency: 'USD',
     description:
       'Perfect for casual anglers who want to get started with the basics. ',
     permission: 'free',
@@ -23,7 +23,7 @@ const plans: PlanInterface[] = [
   {
     name: 'pro',
     price: 20,
-    currency: 'UAH',
+    currency: 'USD',
     description:
       'For serious anglers who want an edge on every trip. Unlock advanced forecasts, detailed weather insights, and powerful tools to plan your next big catch with precision.',
     permission: 'pro',
